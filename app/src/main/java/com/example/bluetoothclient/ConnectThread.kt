@@ -4,8 +4,8 @@ import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket
-import android.os.Handler
 import android.util.Log
+import com.example.bluetoothclient.data.Message
 import java.io.IOException
 import java.io.OutputStream
 import java.util.*
@@ -32,14 +32,21 @@ class ConnectThread(private val bluetoothAdapter: BluetoothAdapter, private val 
                 if (socket.isConnected) {
                     Log.w(TAG,"Connected!")
                     val mmOutStream: OutputStream = socket.outputStream
-                    var i = 0
+                    val message = Message.newBuilder().setContent("Saludos desde la tablet!").build()
+                    val bytes = message.toByteArray()
 
-                    while (i < 4) {
-                        mmOutStream.write(ByteArray(4))
-                        i++
-                    }
+                    Log.i(TAG, "Tamaño del array de bytes por enviar: " + bytes.size.toString())
+                    bytes.forEach { Log.i(TAG, it.toString()) }
+                    mmOutStream.write(bytes)
+
+//                    var i = 0
+//
+//                    while (i < 4) {
+//                        mmOutStream.write(ByteArray(1))
+//                        i++
+//                    }
                 } else {
-                    Log.e(TAG,"Can't connect")
+                    Log.e(TAG,"Socket isn't connected")
                 }
 
             } catch (e: IOException) {
